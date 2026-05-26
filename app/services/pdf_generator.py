@@ -51,7 +51,7 @@ def generate_permit_pdf(permit: Permit) -> bytes:
     html_content = template.render(context)
     
     # 5. Convert to PDF using Playwright
-    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = os.path.join(project_root, ".playwright")
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
