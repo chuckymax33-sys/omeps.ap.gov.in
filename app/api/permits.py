@@ -83,6 +83,21 @@ def create_permit(
     
     qr_base64 = generate_qr_code(verification_url, db_permit.permit_number)
     
+    # Extract base64 part and decode to bytes
+    import base64
+    from app.services.supabase_storage import upload_qr_to_supabase
+    
+    qr_b64_str = qr_base64.replace("data:image/png;base64,", "")
+    qr_bytes = base64.b64decode(qr_b64_str)
+    
+    # Upload QR to Supabase
+    qr_filename = f"qr_{db_permit.permit_number}.png"
+    qr_public_url = upload_qr_to_supabase(qr_bytes, qr_filename)
+    
+    # Save the QR URL to database
+    db_permit.qr_url = qr_public_url
+    db.commit()
+    
     # 5. Return detailed response
     return {
         "permit": db_permit,
