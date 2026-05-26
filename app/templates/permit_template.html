@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Transit Permit</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 8mm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #000;
+            margin: 0;
+            padding: 0;
+        }
+        .form-section {
+            height: 135mm;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        .divider {
+            border-bottom: 1px dashed #666;
+            margin: 2mm 0;
+        }
+        
+        /* Watermark */
+        .watermark-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .watermark-text {
+            color: rgba(100, 100, 100, 0.25);
+            font-size: 11px;
+            white-space: normal;
+            word-break: break-word;
+            transform: rotate(-35deg);
+            transform-origin: center center;
+            width: 250%;
+            height: 250%;
+            position: absolute;
+            top: -75%;
+            left: -75%;
+            line-height: 5.5;
+            text-align: justify;
+        }
+
+        /* Header area */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10mm;
+            margin-bottom: 2mm;
+        }
+        .logo-box {
+            width: 28mm;
+            height: 28mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .logo-box img {
+            width: 28mm;
+            height: auto;
+            max-height: 28mm;
+            filter: contrast(1.5) brightness(0.95);
+            object-fit: contain;
+        }
+        .title-box {
+            margin: 0;
+            text-align: center;
+            flex-grow: 1;
+        }
+        .title-box h3 {
+            margin: 0 0 2mm 0;
+            font-size: 16px;
+        }
+        .title-box h2 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .qr-box {
+            width: 25mm;
+            text-align: right;
+            padding-right: 15mm;
+        }
+        .qr-box img {
+            width: 16mm;
+            height: 16mm;
+        }
+
+        /* Top Info row */
+        .top-info {
+            display: grid;
+            grid-template-columns: 32% 30% 38%;
+            width: 90%;
+            margin-left: 8mm;
+            margin-bottom: 2mm;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Table */
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            margin-bottom: 2mm;
+            table-layout: fixed;
+            margin-left: 8mm;
+        }
+        th, td {
+            border: 0.1pt solid #333;
+            padding: 1mm 1mm;
+            vertical-align: middle;
+            font-size: 11px;
+            word-wrap: break-word;
+        }
+        .col-label {
+            width: 25%;
+            font-weight: bold;
+            color: #000;
+        }
+        .col-value {
+            width: 25%;
+        }
+
+        /* Footer Info */
+        .footer-note {
+            font-style: italic;
+            font-size: 12px;
+            margin-top: 1mm;
+            margin-left: 8mm;
+            line-height: 1.4;
+            font-weight: bold;
+        }
+        .signature-box {
+            position: absolute;
+            bottom: 2mm;
+            right: 18mm;
+            text-align: right;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    {% macro render_form(type) %}
+    <div class="form-section">
+        
+        <!-- Watermark Pattern -->
+        <div class="watermark-container">
+            <div class="watermark-text">
+                {% for i in range(120) %}
+                {{ permit.transit_id }} | Lessee: {{ permit.lessee_name }} | Vehicle: {{ permit.vehicle_number }} | Dispatch Qty: {{ dispatch_qty }} MT | Sale Price: {{ sale_price }} | Destination: {{ permit.destination }} | Consignee Addr: {{ permit.consignee_address }} | Location: {{ permit.consignee_address }} | Distance/Time: {{ permit.distance_km }} KM / {{ permit.time_required }} | Survey No: {{ permit.survey_number }} | HSN Code: {{ permit.hsn_code }} | Driver: {{ permit.driver_name }} | License No: {{ permit.driving_license_number }} | Stationary No: {{ permit.stationary_number }} | Date: {{ issue_date_str }} &nbsp;&nbsp;&nbsp;
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-box">
+                {% if logo_base64 %}
+                <img src="data:image/png;base64,{{ logo_base64 }}" alt="Logo">
+                {% endif %}
+            </div>
+            <div class="title-box">
+                {% if type == 'Original' %}
+                <h3>District Director: null</h3>
+                {% endif %}
+                <h2>TRANSIT FORM ({{ type }})</h2>
+            </div>
+            <div class="qr-box">
+                <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code">
+            </div>
+        </div>
+
+        <!-- Top Info Row -->
+        <div class="top-info">
+            <span>HSN Code: {{ permit.hsn_code }}</span>
+            <span>Stationary No: {{ permit.stationary_number }}</span>
+            <span>Date & Time of Dispatch: {{ issue_date_str }}</span>
+        </div>
+
+        <!-- Main Table -->
+        <table>
+            <tbody>
+                <tr>
+                    <td class="col-label">Lessee Id</td>
+                    <td class="col-value">{{ permit.tp_id }}</td>
+                    <td class="col-label">MDL No</td>
+                    <td class="col-value"></td>
+                </tr>
+                <tr>
+                    <td class="col-label">Lessee Name</td>
+                    <td class="col-value">{{ permit.lessee_name }}</td>
+                    <td class="col-label">Mdl Name/Consignee Name</td>
+                    <td class="col-value">{{ permit.consignee_name }}</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Survey No</td>
+                    <td class="col-value">{{ permit.survey_number }}</td>
+                    <td class="col-label" colspan="2">MDL Business Village/Consignee Address : {{ permit.consignee_address }}</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Village</td>
+                    <td class="col-value">{{ permit.village }}</td>
+                    <td class="col-label">MDL Business Mandal</td>
+                    <td class="col-value"></td>
+                </tr>
+                <tr>
+                    <td class="col-label">Mandal</td>
+                    <td class="col-value">{{ permit.mandal }}</td>
+                    <td class="col-label">MDL Business District</td>
+                    <td class="col-value"></td>
+                </tr>
+                <tr>
+                    <td class="col-label">District</td>
+                    <td class="col-value">{{ permit.district }}</td>
+                    <td class="col-label">GST No</td>
+                    <td class="col-value">{{ permit.gstin if permit.gstin else '' }}</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Mineral Name</td>
+                    <td class="col-value">{{ permit.mineral_name }}</td>
+                    <td class="col-label">Sale Price</td>
+                    <td class="col-value">{{ sale_price | float | int }}</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Permit No</td>
+                    <td class="col-value">{{ permit.permit_number }}</td>
+                    <td class="col-label">Vehicle No</td>
+                    <td class="col-value">{{ permit.vehicle_number }}</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Transit Form No</td>
+                    <td class="col-value">{{ permit.transit_id }}</td>
+                    <td class="col-label">Dispatch Qty</td>
+                    <td class="col-value">{{ dispatch_qty | float | int }} MT</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Driver Name</td>
+                    <td class="col-value"><strong>{{ permit.driver_name }}</strong></td>
+                    <td class="col-label">Driver License No</td>
+                    <td class="col-value">{{ permit.driving_license_number }}</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Distance (KM)</td>
+                    <td class="col-value">{{ permit.distance_km | float | int }}</td>
+                    <td class="col-label">Required Time</td>
+                    <td class="col-value">{{ permit.time_required }}</td>
+                </tr>
+                <tr>
+                    <td class="col-label">Destination</td>
+                    <td class="col-value" colspan="3">{{ permit.destination }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Footer Notes -->
+        <div class="footer-note">
+            Note: The Transit Form is valid only on the Printed Secured Stationary with Hologram embedded.<br>
+            Note: This is System generated document ,does n't require Physical Signature.
+        </div>
+
+        {% if type == 'Duplicate' %}
+        <div class="signature-box">
+            Signature of Driver
+        </div>
+        {% endif %}
+    </div>
+    {% endmacro %}
+
+    <!-- Render Original -->
+    {{ render_form("Original") }}
+    
+    <div class="divider"></div>
+    
+    <!-- Render Duplicate -->
+    {{ render_form("Duplicate") }}
+
+</body>
+</html>

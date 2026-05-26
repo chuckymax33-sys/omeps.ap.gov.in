@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: project-k-api
+    env: docker
+    plan: free # Can be upgraded to starter/pro depending on requirements
+    healthCheckPath: /
+    envVars:
+      # --- Database ---
+      - key: DATABASE_URL
+        sync: false # Set to your Supabase PostgreSQL connection string in the Render Dashboard
+
+      # --- JWT Auth ---
+      - key: SECRET_KEY
+        generateValue: true # Auto-generated strong secret key
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 1440 # 24 hours
+
+      # --- Frontend URL (Vercel) — used for QR codes & CORS ---
+      - key: FRONTEND_URL
+        sync: false # Set to your Vercel URL e.g. https://project-k.vercel.app
+
+      # --- Default Admin Credentials (seeded on first run) ---
+      - key: ADMIN_USERNAME
+        sync: false # Set a secure admin username in the Render Dashboard
+      - key: ADMIN_PASSWORD
+        sync: false # Set a strong admin password in the Render Dashboard
+
+      # --- Supabase Storage (for PDF uploads) ---
+      - key: SUPABASE_URL
+        sync: false # Set your Supabase project URL in the Render Dashboard
+      - key: SUPABASE_KEY
+        sync: false # Set your Supabase anon/service key in the Render Dashboard
