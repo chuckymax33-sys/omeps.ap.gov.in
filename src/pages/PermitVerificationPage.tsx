@@ -85,7 +85,7 @@ const PermitVerificationPage: React.FC = () => {
       {/* Header */}
       <div className="bg-[#1E40AF] text-white px-4 py-4 sm:px-6 sm:py-6 flex justify-between items-center shadow-md">
         <div className="flex items-center space-x-3">
-          <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-full shrink-0 shadow-md">
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 shrink-0">
             <img src="/ap-logo.png" alt="AP Logo" className="absolute top-9 left-1/2 -translate-x-1/2 -translate-y-1/2 -mt-1.5 w-16 h-16 sm:w-20 sm:h-20 max-w-none object-contain drop-shadow-md hover:scale-105 transition-transform" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
           </div>
           <div>
