@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
-  Check, Pickaxe, Calendar, Loader2
+  Check, Loader2
 } from "lucide-react";
 import api from "../services/api";
 import type { Permit } from "../types";
