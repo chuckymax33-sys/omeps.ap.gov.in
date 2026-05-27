@@ -176,15 +176,6 @@ def get_permit_pdf(
     # Generate PDF
     pdf_bytes = generate_permit_pdf(permit)
     
-    # Upload to Supabase Storage
-    filename = f"{permit.permit_number}.pdf"
-    public_url = upload_pdf_to_supabase(pdf_bytes, filename)
-    print(f"PDF uploaded to: {public_url}")
-    
-    # Save the public URL to the database
-    permit.pdf_url = public_url
-    db.commit()
-    
     # Return PDF directly to browser so it can be viewed/printed
     return Response(
         content=pdf_bytes,
