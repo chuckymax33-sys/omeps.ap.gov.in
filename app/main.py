@@ -39,12 +39,8 @@ app = FastAPI(
 )
 
 # CORS configurations
-# FRONTEND_URL = Vercel frontend URL in production
-frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 origins = [
-    frontend_url,
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    "*",
 ]
 
 app.add_middleware(
@@ -56,6 +52,20 @@ app.add_middleware(
 )
 
 
+
+from fastapi.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    with open("error.log", "a") as f:
+        f.write(f"Exception: {str(exc)}\n")
+        f.write(traceback.format_exc())
+        f.write("\n---\n")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal Server Error"}
+    )
 
 # Mount Routers
 app.include_router(auth.router)
