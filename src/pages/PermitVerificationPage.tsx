@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
-  Check, Pickaxe, Calendar, Loader2, Home
+  Check, Pickaxe, Calendar, Loader2
 } from "lucide-react";
 import api from "../services/api";
 import type { Permit } from "../types";
@@ -98,8 +98,18 @@ const PermitVerificationPage: React.FC = () => {
           <div className="hidden sm:block text-sm text-white/90">
             {verifyDate.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </div>
-          <a href="https://omeps.ap.gov.in/#/home/index" className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center border border-white/20 transition-colors">
-            <Home className="w-5 h-5 text-white" />
+          <a
+            href="https://omeps.ap.gov.in/#/home/index"
+            className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center border border-white/20 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="white"
+              className="w-5 h-5"
+            >
+              <path d="M12 3l9 8h-3v10h-5v-6H11v6H6V11H3l9-8z" />
+            </svg>
           </a>
         </div>
       </div>
@@ -121,7 +131,7 @@ const PermitVerificationPage: React.FC = () => {
         {/* Temporary Permit Details Title */}
         <div className="flex justify-between items-center border-b border-green-900/10 pb-3 mb-4">
           <div className="flex items-center space-x-2">
-            <Pickaxe className="w-5 h-5 text-amber-600 rotate-45" />
+            <span className="text-xl inline-block transform rotate-[5deg]">⛏️</span>
             <h3 className="font-bold text-slate-800 text-lg">Temporary Permit Details</h3>
           </div>
           <span className="font-bold text-slate-800 text-sm">TP</span>
@@ -162,7 +172,7 @@ const PermitVerificationPage: React.FC = () => {
         <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-5 flex mb-8">
           <div className="flex-1 flex flex-col justify-center border-r border-slate-200 pl-2">
             <div className="flex items-center justify-center mb-2">
-              <Calendar className="w-5 h-5 text-red-600" />
+              <span className="text-2xl">📅</span>
             </div>
             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider text-center mb-3">VERIFIED</div>
             <div className="text-sm font-bold text-slate-800 text-center">
