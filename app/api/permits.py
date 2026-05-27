@@ -177,6 +177,7 @@ def get_permit_pdf(
     pdf_bytes = generate_permit_pdf(permit)
     
     # Return PDF directly to browser so it can be viewed/printed
+    filename = f"{permit.permit_number}.pdf"
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
