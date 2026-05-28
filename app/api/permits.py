@@ -14,16 +14,6 @@ from app.utils.qr import generate_qr_code
 
 router = APIRouter(prefix="/api/permits", tags=["Permits"])
 
-def generate_permit_number() -> str:
-    """
-    Generates a unique permit number in the format PRYYMMDDHHMMSSXX
-    e.g. PR26052512304589
-    """
-    now = datetime.now()
-    date_str = now.strftime("%y%m%d%H%M%S")
-    rand_digits = "".join(str(random.randint(0, 9)) for _ in range(2))
-    return f"PR{date_str}{rand_digits}"
-
 def check_and_update_permit_status(permit: Permit) -> str:
     """
     Determines validity dynamically based on time and returns current status.
@@ -50,24 +40,19 @@ def create_permit(
 ):
     """
     Public Endpoint: Create a transit permit.
-    Generates unique ID, unique permit number, and custom QR code.
+    Generates unique ID and custom QR code.
     Returns the created permit along with its Base64 QR code.
     """
-    # 1. Generate unique permit number
-    permit_num = generate_permit_number()
-    while db.query(Permit).filter(Permit.permit_number == permit_num).first() is not None:
-        permit_num = generate_permit_number()
-        
-    # 2. Instantiate Permit model
+    # 1. Instantiate Permit model
     permit_data = permit_in.model_dump()
     
-    # Generate random transit ID with last 4 digits randomized
-    new_transit_id = f"TRANSIT20260515{random.randint(0, 9999):04d}"
+    # Generate random transit ID with dynamic date
+    date_str = datetime.now().strftime("%Y%m%d")
+    new_transit_id = f"TRANSIT{date_str}{random.randint(0, 9999):04d}"
     
     permit_data["transit_id"] = new_transit_id
 
     db_permit = Permit(
-        permit_number=permit_num,
         status="VALID",
         **permit_data
     )
@@ -77,11 +62,11 @@ def create_permit(
     db.commit()
     db.refresh(db_permit)
     
-    # 4. Generate QR Code with secure URL: https://domain.com/permit/{permit_number}
+    # 4. Generate QR Code with secure URL using Composite Key
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
-    verification_url = f"{frontend_url}/permit/{db_permit.permit_number}"
+    verification_url = f"{frontend_url}/permit/{db_permit.stationary_number}/{db_permit.transit_id}"
     
-    qr_base64 = generate_qr_code(verification_url, db_permit.permit_number)
+    qr_base64 = generate_qr_code(verification_url, db_permit.transit_id)
     
     # Extract base64 part and decode to bytes
     import base64
@@ -90,8 +75,8 @@ def create_permit(
     qr_b64_str = qr_base64.replace("data:image/png;base64,", "")
     qr_bytes = base64.b64decode(qr_b64_str)
     
-    # Upload QR to Supabase
-    qr_filename = f"qr_{db_permit.permit_number}.png"
+    # Upload QR to Supabase using Composite Key
+    qr_filename = f"qr_{db_permit.stationary_number}_{db_permit.transit_id}.png"
     qr_public_url = upload_qr_to_supabase(qr_bytes, qr_filename)
     
     # Save the QR URL to database
@@ -107,21 +92,20 @@ def create_permit(
         "permit_url": verification_url
     }
 
-@router.get("/{permit_id}")
+@router.get("/{stationary_number}/{transit_id}")
 def get_permit_by_id(
-    permit_id: str,
+    stationary_number: str,
+    transit_id: str,
     db: Session = Depends(get_db)
 ):
     """
-    Public Endpoint: Get a permit by UUID, permit_number, or transit_id for verification.
+    Public Endpoint: Get a permit by composite key for verification.
     """
     permit = db.query(Permit).filter(
-        or_(
-            Permit.id == permit_id,
-            Permit.permit_number == permit_id,
-            Permit.transit_id == permit_id
-        )
+        Permit.stationary_number == stationary_number,
+        Permit.transit_id == transit_id
     ).first()
+    
     if not permit:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -137,8 +121,8 @@ def get_permit_by_id(
         
     # Generate QR Code image base64 dynamically so it's guaranteed to load on verification page
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
-    verification_url = f"{frontend_url}/permit/{permit.permit_number}"
-    qr_base64 = generate_qr_code(verification_url, permit.permit_number)
+    verification_url = f"{frontend_url}/permit/{permit.stationary_number}/{permit.transit_id}"
+    qr_base64 = generate_qr_code(verification_url, permit.transit_id)
     
     return {
         "permit": permit,
@@ -151,9 +135,10 @@ from fastapi.responses import Response
 from app.services.pdf_generator import generate_permit_pdf
 from app.services.supabase_storage import upload_pdf_to_supabase
 
-@router.get("/{permit_id}/pdf")
+@router.get("/{stationary_number}/{transit_id}/pdf")
 def get_permit_pdf(
-    permit_id: str,
+    stationary_number: str,
+    transit_id: str,
     db: Session = Depends(get_db)
 ):
     """
@@ -161,11 +146,8 @@ def get_permit_pdf(
     Also uploads the generated PDF to Supabase Storage.
     """
     permit = db.query(Permit).filter(
-        or_(
-            Permit.id == permit_id,
-            Permit.permit_number == permit_id,
-            Permit.transit_id == permit_id
-        )
+        Permit.stationary_number == stationary_number,
+        Permit.transit_id == transit_id
     ).first()
     if not permit:
         raise HTTPException(

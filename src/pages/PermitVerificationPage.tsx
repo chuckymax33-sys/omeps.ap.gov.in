@@ -14,7 +14,7 @@ const DataCard = ({ label, value }: { label: string, value: string | number | un
 );
 
 const PermitVerificationPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { stationaryNumber, transitId } = useParams<{ stationaryNumber: string, transitId: string }>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [permit, setPermit] = useState<Permit | null>(null);
@@ -32,7 +32,7 @@ const PermitVerificationPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/api/permits/${id}`);
+        const response = await api.get(`/api/permits/${stationaryNumber}/${transitId}`);
         setPermit(response.data.permit);
       } catch (err: any) {
         console.error(err);
@@ -42,10 +42,10 @@ const PermitVerificationPage: React.FC = () => {
       }
     };
 
-    if (id) {
+    if (stationaryNumber && transitId) {
       fetchPermitDetails();
     }
-  }, [id]);
+  }, [stationaryNumber, transitId]);
 
   if (loading) {
     return (
@@ -59,11 +59,11 @@ const PermitVerificationPage: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#f0f9f4]">
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center space-y-4 border border-red-200">
-          <h2 className="text-xl font-bold text-slate-800">Verification Failed</h2>
-          <p className="text-sm text-slate-500">{error || "The requested permit does not exist."}</p>
-          <Link to="/" className="inline-block mt-4 text-[#1E40AF] font-semibold underline">
+          <h2 className="text-xl font-bold text-slate-800">SERVER DOWN</h2>
+          <p className="text-sm text-slate-500">try again later</p>
+          <a href="https://omeps.ap.gov.in/#/home/index" className="inline-block mt-4 text-[#1E40AF] font-semibold underline">
             Back to Home
-          </Link>
+          </a>
         </div>
       </div>
     );
@@ -94,8 +94,8 @@ const PermitVerificationPage: React.FC = () => {
             <p className="text-[10px] text-white/60 mt-2">Government</p>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="hidden sm:block text-sm text-white/90">
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="text-[10px] sm:text-sm text-white/90 text-right whitespace-nowrap leading-tight">
             {verifyDate.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
           </div>
           <a
@@ -156,9 +156,7 @@ const PermitVerificationPage: React.FC = () => {
           <DataCard label="Destination Location" value={permit.destination} />
           <DataCard label="Consignee Name" value={permit.consignee_name} />
           <DataCard label="Consignee Address" value={permit.consignee_address} />
-          <DataCard label="Mandal" value={permit.mandal} />
-          <DataCard label="Village" value={permit.village} />
-          <DataCard label="District" value={permit.district} />
+
           <DataCard label="Survey Number" value={permit.survey_number} />
           <DataCard label="Sale Value" value={`₹ ${permit.sale_value?.toLocaleString()}`} />
           <DataCard label="Stationary Number" value={permit.stationary_number} />

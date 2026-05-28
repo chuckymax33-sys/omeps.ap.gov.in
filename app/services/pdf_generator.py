@@ -13,8 +13,8 @@ def generate_permit_pdf(permit: Permit) -> bytes:
     """
     # 1. Generate QR Code Base64 using the same exact method as the UI
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
-    verify_url = f"{frontend_url}/permit/{permit.permit_number}"
-    qr_data_uri = generate_qr_code(verify_url)
+    verify_url = f"{frontend_url}/permit/{permit.stationary_number}/{permit.transit_id}"
+    qr_data_uri = generate_qr_code(verify_url, permit.transit_id)
     qr_b64 = qr_data_uri.replace("data:image/png;base64,", "")
     
     # Read base64 logo if it exists to embed it directly
@@ -51,7 +51,7 @@ def generate_permit_pdf(permit: Permit) -> bytes:
     html_content = template.render(context)
     
     # 5. Convert to PDF using Playwright
-
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = os.path.join(project_root, ".playwright")
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()

@@ -6,18 +6,17 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 # Load environment variables from .env file
 load_dotenv()
 
-# Load DATABASE_URL from environment variables, fallback to local SQLite for development
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./transit_permits.db")
+# Load DATABASE_URL from environment variables
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL environment variable is missing!")
 
 # Render/Railway sometimes output connection strings starting with postgres://
 # SQLAlchemy 1.4+ requires postgresql://
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Check if using SQLite to add thread-safe arguments
 connect_args = {}
-if DATABASE_URL.startswith("sqlite"):
-    connect_args = {"check_same_thread": False}
 
 engine = create_engine(
     DATABASE_URL,

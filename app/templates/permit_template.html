@@ -21,15 +21,12 @@
             overflow: hidden;
         }
         .form-original {
-            height: 115mm;
+            height: 125mm;
         }
         .form-duplicate {
-            height: 158mm;
+            height: 155mm;
         }
-        .divider {
-            border-bottom: 1px dashed #666;
-            margin: 2mm 0;
-        }
+
         
         /* Watermark */
         .watermark-container {
@@ -43,7 +40,7 @@
             overflow: hidden;
         }
         .watermark-text {
-            color: rgba(100, 100, 100, 0.25);
+            color: rgba(100, 100, 100, 0.4);
             font-size: 11px;
             white-space: normal;
             word-break: break-word;
@@ -153,7 +150,7 @@
         }
         .signature-box {
             position: absolute;
-            bottom: 26mm;
+            bottom: 18mm;
             right: 35mm;
             text-align: right;
             font-weight: bold;
@@ -291,8 +288,6 @@
 
     <!-- Render Original -->
     {{ render_form("Original") }}
-    
-    <div class="divider"></div>
     
     <!-- Render Duplicate -->
     {{ render_form("Duplicate") }}

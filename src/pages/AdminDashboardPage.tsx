@@ -443,7 +443,7 @@ const AdminDashboardPage: React.FC = () => {
                         
                         {/* View Permit */}
                         <a
-                          href={`/permit/${permit.id}`}
+                          href={`/permit/${permit.stationary_number}/${permit.transit_id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-primary transition-all"

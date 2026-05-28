@@ -12,10 +12,12 @@ import type { Permit } from "../types";
 
 // Zod Schema for validation
 const formSchema = zod.object({
+  permit_number: zod.string().min(1, "Permit number is required"),
   issue_on: zod.string().min(1, "Issue date is required"),
   validity_from: zod.string().min(1, "Validity from date is required"),
   validity_to: zod.string().min(1, "Validity to date is required"),
   tp_id: zod.string().optional(),
+  is_mdl: zod.string().optional(),
   
   mobile_number: zod.string().regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
   stationary_number: zod.string().min(1, "Stationary number is required"),
@@ -106,11 +108,13 @@ const PermitFormPage: React.FC = () => {
   } = useForm<any>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      permit_number: "TPPER202604250794",
       issue_on: new Date().toISOString().split("T")[0],
       validity_from: new Date().toISOString().split("T")[0],
       validity_to: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
       stationary_number: "DD",
       tp_id: "2611260047",
+      is_mdl: "Non-MDL",
       authorized_qty_selection: "300",
       actual_dispatch_qty_selection: "10",
       consignee_name_selection: "default",
@@ -277,7 +281,7 @@ const PermitFormPage: React.FC = () => {
   const printPermit = () => {
     if (!createdPermit) return;
     const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    window.open(`${backendUrl}/api/permits/${createdPermit.id}/pdf`, "_blank");
+    window.open(`${backendUrl}/api/permits/${createdPermit.stationary_number}/${createdPermit.transit_id}/pdf`, "_blank");
   };
 
   return (
@@ -332,8 +336,8 @@ const PermitFormPage: React.FC = () => {
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                 Transit ID
               </label>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-500 font-mono">
-                TRANSIT202605152858
+              <div className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-500 font-mono italic">
+                Auto-generated
               </div>
             </div>
 
@@ -355,9 +359,15 @@ const PermitFormPage: React.FC = () => {
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                 Permit Number
               </label>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-500 font-mono">
-                TPPER202605152316
-              </div>
+              <select
+                {...register("permit_number")}
+                className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono"
+              >
+                <option value="TPPER202604250794">TPPER202604250794</option>
+                <option value="TPPER202604258302">TPPER202604258302</option>
+                <option value="TPPER203605063097">TPPER203605063097</option>
+                <option value="TPPER202605152316">TPPER202605152316</option>
+              </select>
             </div>
             
             <div>

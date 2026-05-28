@@ -39,7 +39,7 @@ class PermitBase(BaseModel):
     time_required: str = Field("004:30", max_length=20) # format HHH:MM
 
 class PermitCreate(PermitBase):
-    pass
+    permit_number: str
 
 class PermitUpdate(BaseModel):
     authorized_qty: Optional[float] = None

@@ -25,7 +25,7 @@ const AppContent: React.FC = () => {
       <main className="flex-grow flex flex-col">
         <Routes>
           <Route path="/" element={<PermitFormPage />} />
-          <Route path="/permit/:id" element={<PermitVerificationPage />} />
+          <Route path="/permit/:stationaryNumber/:transitId" element={<PermitVerificationPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route
             path="/admin/dashboard"
