@@ -44,6 +44,9 @@ const PermitVerificationPage: React.FC = () => {
 
     if (stationaryNumber && transitId) {
       fetchPermitDetails();
+    } else {
+      setLoading(false);
+      setError("Invalid Permit ID Format");
     }
   }, [stationaryNumber, transitId]);
 

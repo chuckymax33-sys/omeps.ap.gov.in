@@ -26,6 +26,7 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/" element={<PermitFormPage />} />
           <Route path="/permit/:stationaryNumber/:transitId" element={<PermitVerificationPage />} />
+          <Route path="/permit/*" element={<PermitVerificationPage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route
             path="/admin/dashboard"
