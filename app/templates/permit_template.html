@@ -185,7 +185,7 @@
                 {% endif %}
                 <h2>TRANSIT FORM ({{ type }})</h2>
             </div>
-            <div class="qr-box">
+            <div class="qr-box" {% if type == 'Duplicate' %}style="position: relative; top: 6mm;"{% endif %}>
                 <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code">
             </div>
         </div>
