@@ -416,7 +416,9 @@ const PermitFormPage: React.FC = () => {
               </select>
               {watch("authorized_qty_selection") === "custom" && (
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   placeholder="Enter Custom Qty"
                   {...register("authorized_qty_custom")}
                   className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono"
@@ -437,7 +439,9 @@ const PermitFormPage: React.FC = () => {
               </select>
               {watch("actual_dispatch_qty_selection") === "custom" && (
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   placeholder="Enter Custom Qty"
                   {...register("actual_dispatch_qty_custom")}
                   className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono"
@@ -556,7 +560,9 @@ const PermitFormPage: React.FC = () => {
                   </select>
                   {watch("sale_value_selection") === "custom" && (
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       placeholder="Enter Custom Sale Value"
                       {...register("sale_value_custom")}
                       className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono"
@@ -832,7 +838,9 @@ const PermitFormPage: React.FC = () => {
                   </select>
                   {watch("distance_km_selection") === "custom" && (
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       placeholder="Enter Custom Distance"
                       {...register("distance_km_custom")}
                       className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono"
