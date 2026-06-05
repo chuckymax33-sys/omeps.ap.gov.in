@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
-import { 
-  FileCheck, ShieldCheck, Truck, Loader2, Download, Printer, X, Check, ClipboardCheck, Info 
+import {
+  FileCheck, ShieldCheck, Truck, Loader2, Download, Printer, X, Check, ClipboardCheck, Info
 } from "lucide-react";
 import api from "../services/api";
 import type { Permit } from "../types";
@@ -18,10 +18,10 @@ const formSchema = zod.object({
   validity_to: zod.string().min(1, "Validity to date is required"),
   tp_id: zod.string().optional(),
   is_mdl: zod.string().optional(),
-  
+
   mobile_number: zod.string().regex(/^\d{10}$/, "Mobile number must be exactly 10 digits"),
   stationary_number: zod.string().min(1, "Stationary number is required"),
-  
+
   // Transport Details
   vehicle_number: zod.string().min(4, "Vehicle number is required"),
   driver_name: zod.string().min(2, "Driver name is required"),
@@ -86,13 +86,13 @@ const tpConfig = {
 const PermitFormPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
-  
+
   // Verification states
   const [verifyingStationary, setVerifyingStationary] = useState(false);
   const [stationaryVerified, setStationaryVerified] = useState(false);
   const [verifyingVehicle, setVerifyingVehicle] = useState(false);
   const [vehicleVerified, setVehicleVerified] = useState(false);
-  
+
   // Success Modal States
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [createdPermit, setCreatedPermit] = useState<Permit | null>(null);
@@ -193,10 +193,10 @@ const PermitFormPage: React.FC = () => {
     setSubmitting(true);
     try {
       // Form fields validity_from/to need to be parsed to ISO strings
-      const final_authorized_qty = data.authorized_qty_selection === "custom" 
-        ? parseFloat(data.authorized_qty_custom) || 300 
+      const final_authorized_qty = data.authorized_qty_selection === "custom"
+        ? parseFloat(data.authorized_qty_custom) || 300
         : parseFloat(data.authorized_qty_selection || "300");
-        
+
       const final_actual_dispatch_qty = data.actual_dispatch_qty_selection === "custom"
         ? parseFloat(data.actual_dispatch_qty_custom) || 10
         : parseFloat(data.actual_dispatch_qty_selection || "10");
@@ -245,13 +245,13 @@ const PermitFormPage: React.FC = () => {
       };
 
       const response = await api.post("/api/permits/create", payload);
-      
+
       setCreatedPermit(response.data.permit);
       setQrCodeData(response.data.qr_code);
       setPermitUrl(response.data.permit_url);
       setSuccessModalOpen(true);
       showToast("Transit Permit generated successfully!", "success");
-      
+
       // Reset form and verification states
       reset();
       setStationaryVerified(false);
@@ -286,12 +286,11 @@ const PermitFormPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 transition-colors duration-200">
-      
+
       {/* Toast Notification */}
       {toast && (
-        <div className={`fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg flex items-center space-x-3 text-white transition-all duration-300 transform translate-y-0 ${
-          toast.type === "success" ? "bg-green-600" : "bg-red-600"
-        }`}>
+        <div className={`fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg flex items-center space-x-3 text-white transition-all duration-300 transform translate-y-0 ${toast.type === "success" ? "bg-green-600" : "bg-red-600"
+          }`}>
           <div className="font-semibold text-sm">{toast.message}</div>
           <button onClick={() => setToast(null)} className="text-white hover:text-gray-200">
             <X className="w-4 h-4" />
@@ -320,7 +319,7 @@ const PermitFormPage: React.FC = () => {
         {/* Top Header Card: General Permit Details */}
         <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            
+
 
 
             <div>
@@ -369,7 +368,7 @@ const PermitFormPage: React.FC = () => {
                 <option value="TPPER202605152316">TPPER202605152316</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                 TP ID
@@ -409,9 +408,9 @@ const PermitFormPage: React.FC = () => {
                 {...register("authorized_qty_selection")}
                 className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono mb-2"
               >
-                <option value="300">300.00</option>
-                <option value="500">500.00</option>
-                <option value="1000">1000.00</option>
+                <option value="300">300</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
                 <option value="custom">Custom</option>
               </select>
               {watch("authorized_qty_selection") === "custom" && (
@@ -425,7 +424,7 @@ const PermitFormPage: React.FC = () => {
                 />
               )}
             </div>
-            
+
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                 Actual Dispatch Qty
@@ -434,7 +433,9 @@ const PermitFormPage: React.FC = () => {
                 {...register("actual_dispatch_qty_selection")}
                 className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono mb-2"
               >
-                <option value="10">10.00</option>
+                <option value="10">10</option>
+                <option value="22">22</option>
+                <option value="40">40</option>
                 <option value="custom">Custom</option>
               </select>
               {watch("actual_dispatch_qty_selection") === "custom" && (
@@ -454,7 +455,7 @@ const PermitFormPage: React.FC = () => {
 
         {/* Two Main Cards Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
+
           {/* LEFT CARD: Consignee Details */}
           <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-between">
             <div>
@@ -489,7 +490,7 @@ const PermitFormPage: React.FC = () => {
 
               {/* Form Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
+
                 <div className="md:col-span-2">
                   <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
                     Consignee Name
@@ -611,7 +612,7 @@ const PermitFormPage: React.FC = () => {
                     />
                   )}
                 </div>
-                
+
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
                     Mandal
@@ -638,7 +639,7 @@ const PermitFormPage: React.FC = () => {
                     {currentConfig.district}
                   </div>
                 </div>
-                
+
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
                     Valid From <span className="text-red-500">*</span>
@@ -682,16 +683,15 @@ const PermitFormPage: React.FC = () => {
                   {...register("stationary_number")}
                   className="flex-grow bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono"
                 />
-                
+
                 <button
                   type="button"
                   onClick={verifyStationary}
                   disabled={verifyingStationary}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center space-x-1.5 focus:outline-none transition-all ${
-                    stationaryVerified
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold flex items-center justify-center space-x-1.5 focus:outline-none transition-all ${stationaryVerified
                       ? "bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
                       : "bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-650 text-white"
-                  }`}
+                    }`}
                 >
                   {verifyingStationary ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -725,7 +725,7 @@ const PermitFormPage: React.FC = () => {
 
               {/* Form Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
+
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
                     Vehicle Type
@@ -747,16 +747,15 @@ const PermitFormPage: React.FC = () => {
                       {...register("vehicle_number")}
                       className="flex-grow bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-mono uppercase"
                     />
-                    
+
                     <button
                       type="button"
                       onClick={verifyVehicle}
                       disabled={verifyingVehicle}
-                      className={`px-3 py-2 rounded-lg text-sm font-semibold flex items-center justify-center space-x-1 focus:outline-none transition-all ${
-                        vehicleVerified
+                      className={`px-3 py-2 rounded-lg text-sm font-semibold flex items-center justify-center space-x-1 focus:outline-none transition-all ${vehicleVerified
                           ? "bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800"
                           : "bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-650 text-white"
-                      }`}
+                        }`}
                     >
                       {verifyingVehicle ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -871,7 +870,7 @@ const PermitFormPage: React.FC = () => {
 
               </div>
             </div>
-            
+
             {/* Safe Bottom Padding */}
             <div className="pt-4 mt-4 text-[10px] text-slate-400 leading-normal">
               Transit parameters (Distance & Time Required) are populated based on the default highway logistics templates. Adjust manually if alternative route routes are traversed.
@@ -907,7 +906,7 @@ const PermitFormPage: React.FC = () => {
       {successModalOpen && createdPermit && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in duration-200 text-slate-800 dark:text-slate-100">
-            
+
             {/* Modal Header */}
             <div className="gov-header gov-accent-border px-6 py-4 flex items-center justify-between text-white">
               <div className="flex items-center space-x-2">
@@ -917,8 +916,8 @@ const PermitFormPage: React.FC = () => {
                   <p className="text-[10px] text-slate-300">E-Transit Document Verification Active</p>
                 </div>
               </div>
-              <button 
-                onClick={() => setSuccessModalOpen(false)} 
+              <button
+                onClick={() => setSuccessModalOpen(false)}
                 className="text-slate-300 hover:text-white p-1 rounded-full hover:bg-slate-800"
               >
                 <X className="w-5 h-5" />
@@ -927,15 +926,15 @@ const PermitFormPage: React.FC = () => {
 
             {/* Modal Content */}
             <div className="p-6 space-y-6">
-              
+
               {/* QR and URL Info Card */}
               <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-6 bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-200/60 dark:border-slate-800">
                 {/* QR Code Container */}
                 <div className="bg-white p-3 rounded-lg border border-slate-200 shadow-sm flex items-center justify-center w-40 h-40">
                   {qrCodeData ? (
-                    <img 
-                      src={qrCodeData} 
-                      alt="Transit Permit QR Code" 
+                    <img
+                      src={qrCodeData}
+                      alt="Transit Permit QR Code"
                       className="w-full h-full object-contain"
                     />
                   ) : (
@@ -952,9 +951,9 @@ const PermitFormPage: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-xs text-slate-500 uppercase tracking-wider mb-1">Verification URL</h4>
-                    <a 
-                      href={permitUrl} 
-                      target="_blank" 
+                    <a
+                      href={permitUrl}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 dark:text-blue-400 font-mono text-xs hover:underline break-all"
                     >
