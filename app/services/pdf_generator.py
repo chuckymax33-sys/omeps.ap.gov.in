@@ -33,7 +33,7 @@ def generate_permit_pdf(permit: Permit) -> bytes:
         "qr_base64": qr_b64,
         "logo_base64": logo_b64,
         "today_str": datetime.now().strftime("%d-%m-%Y"),
-        "issue_date_str": f"{permit.issue_on.strftime('%d-%m-%Y')} {datetime.now().strftime('%I:%M:%S %p')}" if permit.issue_on else "",
+        "issue_date_str": permit.issue_on.strftime("%d-%m-%Y") if permit.issue_on else "",
         "valid_from_str": permit.validity_from.strftime("%d-%m-%Y") if permit.validity_from else "",
         "valid_to_str": permit.validity_to.strftime("%d-%m-%Y") if permit.validity_to else "",
         # Formatting
