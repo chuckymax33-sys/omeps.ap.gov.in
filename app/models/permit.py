@@ -3,6 +3,12 @@ from datetime import datetime
 from sqlalchemy import Column, String, Float, DateTime
 from app.database.connection import Base
 
+from datetime import timezone, timedelta
+
+def get_ist_now():
+    IST = timezone(timedelta(hours=5, minutes=30))
+    return datetime.now(IST).replace(tzinfo=None)
+
 class Permit(Base):
     __tablename__ = "permits"
 
@@ -52,4 +58,4 @@ class Permit(Base):
     
     # Management fields
     status = Column(String(20), default="VALID")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=get_ist_now)

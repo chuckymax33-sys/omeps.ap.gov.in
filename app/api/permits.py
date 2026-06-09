@@ -14,6 +14,11 @@ from app.utils.qr import generate_qr_code
 
 router = APIRouter(prefix="/api/permits", tags=["Permits"])
 
+from datetime import timedelta
+def get_ist_now():
+    IST = timezone(timedelta(hours=5, minutes=30))
+    return datetime.now(IST).replace(tzinfo=None)
+
 def check_and_update_permit_status(permit: Permit) -> str:
     """
     Determines validity dynamically based on time and returns current status.
@@ -21,14 +26,13 @@ def check_and_update_permit_status(permit: Permit) -> str:
     if permit.status == "CANCELLED":
         return "CANCELLED"
     
-    # Compare with current UTC time
-    now_utc = datetime.now(timezone.utc)
-    
-    # If permit.validity_to is naive (e.g. SQLite), make now_utc naive
-    if permit.validity_to.tzinfo is None:
-        now_utc = datetime.utcnow()
+    # Compare with current IST time
+    now_ist = get_ist_now()
         
-    if now_utc > permit.validity_to:
+    # Ensure both are naive for comparison
+    validity_to_naive = permit.validity_to.replace(tzinfo=None) if permit.validity_to.tzinfo else permit.validity_to
+    
+    if now_ist > validity_to_naive:
         return "EXPIRED"
         
     return "VALID"
@@ -47,7 +51,7 @@ def create_permit(
     permit_data = permit_in.model_dump()
     
     # Generate random transit ID with dynamic date
-    date_str = datetime.now().strftime("%Y%m%d")
+    date_str = get_ist_now().strftime("%Y%m%d")
     new_transit_id = f"TRANSIT{date_str}{random.randint(0, 9999):04d}"
     
     permit_data["transit_id"] = new_transit_id

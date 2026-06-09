@@ -28,12 +28,17 @@ def generate_permit_pdf(permit: Permit) -> bytes:
             logo_b64 = base64.b64encode(f.read()).decode("utf-8")
     
     # 2. Prepare Context
+    from datetime import timezone, timedelta
+    def get_ist_now():
+        IST = timezone(timedelta(hours=5, minutes=30))
+        return datetime.now(IST).replace(tzinfo=None)
+
     context = {
         "permit": permit,
         "qr_base64": qr_b64,
         "logo_base64": logo_b64,
-        "today_str": datetime.now().strftime("%d-%m-%Y"),
-        "issue_date_str": permit.issue_on.strftime("%d-%m-%Y") if permit.issue_on else "",
+        "today_str": get_ist_now().strftime("%d-%m-%Y"),
+        "issue_date_str": get_ist_now().strftime("%d-%m-%Y %I:%M:%S %p"),
         "valid_from_str": permit.validity_from.strftime("%d-%m-%Y") if permit.validity_from else "",
         "valid_to_str": permit.validity_to.strftime("%d-%m-%Y") if permit.validity_to else "",
         # Formatting

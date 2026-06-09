@@ -81,8 +81,6 @@ const tpConfig = {
   }
 };
 
-
-
 const PermitFormPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -226,6 +224,9 @@ const PermitFormPage: React.FC = () => {
         ...currentConfig,
         lessee_name: final_lessee_name,
         mineral_name: final_mineral_name,
+        permit_number: data.permit_number,
+        tp_id: data.tp_id,
+        is_mdl: data.is_mdl,
         authorized_qty: final_authorized_qty,
         actual_dispatch_quantity: final_actual_dispatch_qty,
         consignee_name: final_consignee_name?.toUpperCase(),
@@ -239,9 +240,9 @@ const PermitFormPage: React.FC = () => {
         vehicle_number: data.vehicle_number?.toUpperCase(),
         driver_name: data.driver_name?.toUpperCase(),
         driving_license_number: data.driving_license_number?.toUpperCase(),
-        issue_on: new Date(data.issue_on).toISOString(),
-        validity_from: new Date(data.validity_from).toISOString(),
-        validity_to: new Date(data.validity_to).toISOString(),
+        issue_on: data.issue_on,
+        validity_from: data.validity_from,
+        validity_to: data.validity_to,
       };
 
       const response = await api.post("/api/permits/create", payload);
